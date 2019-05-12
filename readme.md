@@ -52,3 +52,7 @@ type Person struct {
 - -p：要扫描的包路径
 - -c：指定要生成的类名，选填，格式为 A,B,C。不填时为包内所有类生成代码
 - -w：无此参数时，会把生成的代码输出到 stdout 自行后续处理；有此参数时会把生成的代码写到 `class_option_gen.go`
+
+## todo
+
+自定义 template 为 struct 生成各种模板代码。说白了就是把 Generator 给开放出来，我帮你解析好 struct，你直接写你要的代码格式。
