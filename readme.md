@@ -2,6 +2,9 @@
 
 Generator class fields as constructor options
 
+## Install
+
+	go get -v github.com/micln/goption
 
 ## Usage
 
