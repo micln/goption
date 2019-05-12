@@ -1,0 +1,25 @@
+package {{.Package.Name}}
+
+{{ $class := .}}
+{{ $classVar := ToLower $class.Name}}
+
+{{ $optT := print .Name "Option" }}
+
+type {{$optT}} func(*{{.Name}})
+
+func New{{.Name}}(opts ...{{$optT}}) ({{$classVar}} *{{.Name}}) {
+	{{$classVar}} = &{{.Name}}{}
+	for _, opt := range opts {
+		opt({{$classVar}})
+	}
+	return
+}
+
+{{ range .Fields}}
+{{ $lower := ToLower .Name }}
+func With{{$class.Name}}{{.Name}}({{$lower}} {{.TypeName}}) func(*{{$class.Name}}) {
+	return func({{$classVar}} *{{$class.Name}}) {
+		{{$classVar}}.{{.Name}} = {{$lower}}
+	}
+}
+{{ end }}
