@@ -2,6 +2,10 @@
 
 Generator class fields as constructor options
 
+## Quick Look
+
+![](https://cdn.sinaimg.cn.52ecy.cn/large/005BYqpgly1g307gsts99g30gn0amx6w.jpg)
+
 ## Install
 
 	go get -v github.com/micln/goption
@@ -52,3 +56,7 @@ type Person struct {
 - -p：要扫描的包路径
 - -c：指定要生成的类名，选填，格式为 A,B,C。不填时为包内所有类生成代码
 - -w：无此参数时，会把生成的代码输出到 stdout 自行后续处理；有此参数时会把生成的代码写到 `class_option_gen.go`
+
+## About
+
+- [Goption：一个针对 Go struct 的代码生成器](https://romatic.net/post/goption/)
