@@ -23,6 +23,7 @@ var (
 	pkgName         = app.Flag("package", "package full path").Short('p').Required().String()
 	classesName     = app.Flag(`classes`, `match classes name like "person,car".`).Short('c').String()
 	enableWriteFile = app.Flag(`writefile`, `write generated code`).Short('w').Default("false").Bool()
+	strictCase      = app.Flag(`strictcase`, `strict case sensitive`).Short('s').Default("false").Bool()
 )
 
 func init() {
@@ -55,6 +56,9 @@ func main() {
 			classesMatch += `|` + value + `|`
 		}
 	}
+	if !*strictCase {
+		classesMatch = strings.ToUpper(classesMatch)
+	}
 
 	log.Println(`input.package =`, *pkgName)
 	log.Println(`input.classes =`, onlyClasses)
@@ -68,7 +72,12 @@ func main() {
 	g := &Generator{}
 	for _, class := range classes {
 		if classesMatch != `` {
-			if !strings.Contains(classesMatch, `|`+class.Name+`|`) {
+			name := class.Name
+			if !*strictCase {
+				name = strings.ToUpper(name)
+			}
+
+			if !strings.Contains(classesMatch, `|`+name+`|`) {
 				log.Println(`SKIP struct:`, class.Name)
 				continue
 			}
