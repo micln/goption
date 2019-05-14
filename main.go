@@ -24,6 +24,7 @@ var (
 	classesName     = app.Flag(`classes`, `match classes name like "person,car".`).Short('c').String()
 	enableWriteFile = app.Flag(`writefile`, `write generated code`).Short('w').Default("false").Bool()
 	strictCase      = app.Flag(`strictcase`, `strict case sensitive`).Short('s').Default("false").Bool()
+	tplPath         = app.Flag(`tpl`, `template file path`).Short('t').Default("").String()
 )
 
 func init() {
@@ -49,6 +50,20 @@ func main() {
 		return
 	}
 
+	vlog(*verbose, `package:`, *pkgName)
+	classes, err := getPackageClasses(*pkgName)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	if tplFileName, ok := tplAlias[*tplPath]; ok {
+		*tplPath = tplFileName
+	}
+
+	if !*strictCase {
+		*classesName = strings.ToUpper(*classesName)
+	}
 	onlyClasses := strings.Split(*classesName, `,`)
 	classesMatch := ``
 	for _, value := range onlyClasses {
@@ -56,20 +71,13 @@ func main() {
 			classesMatch += `|` + value + `|`
 		}
 	}
-	if !*strictCase {
-		classesMatch = strings.ToUpper(classesMatch)
+
+	g := &Generator{
+		TplPath: *tplPath,
+		toolOption: toolOption{
+			verbose: *verbose,
+		},
 	}
-
-	log.Println(`input.package =`, *pkgName)
-	log.Println(`input.classes =`, onlyClasses)
-
-	classes, err := getPackageClasses(*pkgName)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-	g := &Generator{}
 	for _, class := range classes {
 		if classesMatch != `` {
 			name := class.Name
@@ -78,7 +86,7 @@ func main() {
 			}
 
 			if !strings.Contains(classesMatch, `|`+name+`|`) {
-				log.Println(`SKIP struct:`, class.Name)
+				vlog(*verbose, `SKIP struct:`, class.Name)
 				continue
 			}
 		}

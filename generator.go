@@ -2,23 +2,38 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"html/template"
 	"io/ioutil"
+	"log"
 	"os"
-	"path"
+	"strings"
 )
 
-const tplDir = `tpl`
+var tplAlias map[string]string
+
+func init() {
+	tplAlias = map[string]string{
+		"": "tpl/class_option.gohtml",
+	}
+}
 
 type Generator struct {
+	TplPath string
+
+	toolOption
+}
+
+type toolOption struct {
+	verbose bool
 }
 
 func (this *Generator) generateCode(clz *Class) (src string, err error) {
-	return this.render(clz, "class_option.gohtml")
+	return this.render(clz, this.TplPath)
 }
 
-func (this *Generator) render(clz *Class, tplName string) (src string, err error) {
-	t := this.getTemplate(tplName)
+func (this *Generator) render(clz *Class, tplPath string) (src string, err error) {
+	t := this.getTemplate(tplPath)
 
 	buf := bytes.NewBuffer(make([]byte, 0, 1024))
 	err = t.Execute(buf, clz)
@@ -28,12 +43,15 @@ func (this *Generator) render(clz *Class, tplName string) (src string, err error
 	return
 }
 
-func (this *Generator) getTemplate(tplName string) (*template.Template) {
+func (this *Generator) getTemplate(tplPath string) *template.Template {
+	vlog(this.verbose, `template.path:`, tplPath)
 
-	tplPath := path.Join(tplDir, tplName)
+	paths := strings.Split(tplPath, "/")
+	tplName := paths[len(paths)-1]
+
 	bs, err := ioutil.ReadFile(tplPath)
 	if os.IsNotExist(err) {
-		bs, err = Asset("tpl/class_option.gohtml")
+		bs, err = Asset(tplPath)
 	}
 	if err != nil {
 		panic(err)
@@ -41,4 +59,10 @@ func (this *Generator) getTemplate(tplName string) (*template.Template) {
 
 	return template.Must(template.New(tplName).
 		Funcs(funcs).Parse(string(bs)))
+}
+
+func vlog(show bool, args ...interface{}) {
+	if show {
+		log.Output(1, fmt.Sprintln(args...))
+	}
 }
