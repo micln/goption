@@ -2,6 +2,10 @@
 
 Generator class fields as constructor options
 
+## Quick Look
+
+![](https://cdn.sinaimg.cn.52ecy.cn/large/005BYqpgly1g307gsts99g30gn0amx6w.jpg)
+
 ## Install
 
 	go get -v github.com/micln/goption
@@ -56,3 +60,8 @@ type Person struct {
 ## todo
 
 自定义 template 为 struct 生成各种模板代码。说白了就是把 Generator 给开放出来，我帮你解析好 struct，你直接写你要的代码格式。
+
+## About
+
+- [Goption：一个针对 Go struct 的代码生成器](https://romatic.net/post/goption/)
+
